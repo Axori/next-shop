@@ -1,4 +1,5 @@
 import Head from "next/head";
+import Image from "next/image";
 import Title from "@/components/Title";
 import {getProduct, getProducts} from "@/lib/products";
 import {ApiError} from "@/lib/api";
@@ -8,8 +9,7 @@ export async function getStaticPaths() {
   return {
     paths: products.map((product) => ({
       params: {id: product.id.toString()}
-    })),
-    fallback: "blocking",
+    })), fallback: "blocking",
   }
 }
 
@@ -19,8 +19,7 @@ export async function getStaticProps({params}) {
     return {
       props: {
         product
-      },
-      revalidate: parseInt(process.env.REVALIDATE_SECONDS), // seconds
+      }, revalidate: parseInt(process.env.REVALIDATE_SECONDS), // seconds
 
     }
   } catch (e) {
@@ -34,17 +33,23 @@ export async function getStaticProps({params}) {
 }
 
 const Product = ({product}) => {
-  return (
-    <>
-      <Head>
-        <title>Next Shop</title>
-      </Head>
-      <main className="p-2">
-        <Title>{product.title}</Title>
-        <p>{product.description}</p>
-      </main>
-    </>
-  );
+  return (<>
+    <Head>
+      <title>Next Shop</title>
+    </Head>
+    <main className="py-4 px-6">
+      <Title>{product.title}</Title>
+
+      <div className="flex flex-col lg:flex-row ">
+
+        <div><Image src={product.image} alt={product.title} width={640} height={480}/></div>
+        <div className="flex-1 lg:ml-4">
+          <p className="text-sm">{product.description}</p>
+          <p className="text-lg font-bold mt-2">{product.price}</p>
+        </div>
+      </div>
+    </main>
+  </>);
 };
 
 export default Product;
