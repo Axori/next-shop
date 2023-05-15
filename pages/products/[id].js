@@ -9,7 +9,6 @@ export async function getStaticPaths() {
       params: {id: product.id.toString()}
     })),
     fallback: false,
-    revalidate: 30,
   }
 }
 
