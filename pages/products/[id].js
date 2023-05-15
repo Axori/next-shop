@@ -1,6 +1,7 @@
 import Head from "next/head";
 import Title from "@/components/Title";
 import {getProduct, getProducts} from "@/lib/products";
+import {ApiError} from "@/lib/api";
 
 export async function getStaticPaths() {
   const products = await getProducts()
@@ -8,17 +9,27 @@ export async function getStaticPaths() {
     paths: products.map((product) => ({
       params: {id: product.id.toString()}
     })),
-    fallback: false,
+    fallback: "blocking",
   }
 }
 
 export async function getStaticProps({params}) {
-  const product = await getProduct(params.id)
+  try {
+    const product = await getProduct(params.id)
+    return {
+      props: {
+        product
+      },
+      revalidate: 30, // seconds
 
-  return {
-    props: {
-      product
     }
+  } catch (e) {
+    if (e instanceof ApiError && e.status === 404) {
+      // flag from nextJS
+      return {notFound: true};
+    }
+
+    throw e;
   }
 }
 
