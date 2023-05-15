@@ -20,7 +20,7 @@ export async function getStaticProps({params}) {
       props: {
         product
       },
-      revalidate: 30, // seconds
+      revalidate: parseInt(process.env.REVALIDATE_SECONDS), // seconds
 
     }
   } catch (e) {
