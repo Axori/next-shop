@@ -1,8 +1,7 @@
-import Head from "next/head";
 import Image from "next/image";
-import Title from "@/components/Title";
 import {getProduct, getProducts} from "@/lib/products";
 import {ApiError} from "@/lib/api";
+import Page from "@/components/Page";
 
 export async function getStaticPaths() {
   const products = await getProducts()
@@ -33,23 +32,17 @@ export async function getStaticProps({params}) {
 }
 
 const Product = ({product}) => {
-  return (<>
-    <Head>
-      <title>Next Shop</title>
-    </Head>
-    <main className="py-4 px-6">
-      <Title>{product.title}</Title>
-
+  return (
+    <Page title={product.title}>
       <div className="flex flex-col lg:flex-row ">
-
         <div><Image src={product.image} alt={product.title} width={640} height={480}/></div>
         <div className="flex-1 lg:ml-4">
           <p className="text-sm">{product.description}</p>
           <p className="text-lg font-bold mt-2">{product.price}</p>
         </div>
       </div>
-    </main>
-  </>);
+
+    </Page>)
 };
 
 export default Product;
