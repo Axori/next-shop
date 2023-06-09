@@ -4,8 +4,10 @@ import {Field} from "@/components/Field";
 import {Button} from "@/components/Button";
 import {useState} from "react";
 import {fetcher} from "@/lib/api";
+import {useRouter} from "next/router";
 
-const SignIn = () => {
+function SignIn() {
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [status, setStatus] = useState({error: false, loading: false});
@@ -15,13 +17,13 @@ const SignIn = () => {
     setStatus({error: false, loading: true});
 
     try {
-      const response = await fetcher('http://localhost:1337/auth/local', {
+      await fetcher('/api/login', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({identifier: email, password})
+        body: JSON.stringify({email, password})
       })
       setStatus({error: false, loading: false});
-      console.log(response)
+      await router.push('/');
     } catch (e) {
       setStatus({error: true, loading: false});
     }
