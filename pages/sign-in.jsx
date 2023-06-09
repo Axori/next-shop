@@ -3,30 +3,20 @@ import {Input} from "@/components/Input";
 import {Field} from "@/components/Field";
 import {Button} from "@/components/Button";
 import {useState} from "react";
-import {fetcher} from "@/lib/api";
 import {useRouter} from "next/router";
+import {useSignIn} from "@/hooks/user";
 
 function SignIn() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [status, setStatus] = useState({error: false, loading: false});
+  const {isError, isLoading, signIn} = useSignIn()
 
   const handleOnSubmit = async event => {
     event.preventDefault();
-    setStatus({error: false, loading: true});
-
-    try {
-      await fetcher('/api/login', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({email, password})
-      })
-      setStatus({error: false, loading: false});
-      await router.push('/');
-    } catch (e) {
-      setStatus({error: true, loading: false});
-    }
+    const isValid = await signIn(email, password)
+    if (isValid)
+      await router.push('/')
   };
 
   return (
@@ -40,8 +30,8 @@ function SignIn() {
           <Input type="password" required value={password} onChange={e => setPassword(e.target.value)}/>
         </Field>
 
-        {status.error && <p className="text-red-500">Invalid credentials</p>}
-        <Button type="submit" loading={status.loading}>
+        {isError && <p className="text-red-500">Invalid credentials</p>}
+        <Button type="submit" loading={isLoading}>
           Sign In
         </Button>
       </form>

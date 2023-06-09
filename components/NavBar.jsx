@@ -1,25 +1,10 @@
 import Link from "next/link";
-import {useEffect, useState} from "react";
-import {fetcher} from "@/lib/api";
+import {useSignOut, useUser} from "@/hooks/user";
 
 function NavBar() {
-  const [user, setUser] = useState();
+  const user = useUser();
+  const {signOut} = useSignOut()
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const user = await fetcher("/api/user");
-        setUser(user);
-      } catch (error) {
-      }
-    })()
-  }, [])
-
-  async function handleSignOut() {
-    await fetcher("/api/logout")
-
-    setUser(null);
-  }
 
   return <nav className="px-2 py-1">
     <ul className="flex gap-2">
@@ -34,7 +19,7 @@ function NavBar() {
             {user.name}
           </li>
           <li>
-            <button onClick={handleSignOut}>Sign Out</button>
+            <button onClick={signOut}>Sign Out</button>
           </li>
         </> :
         <li>
